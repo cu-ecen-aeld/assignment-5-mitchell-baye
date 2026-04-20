@@ -19,6 +19,10 @@ jobs:
             run: |
               ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com" || true
               ssh-keyscan -t rsa,ed25519,ecdsa github.com >> /root/.ssh/known_hosts
+              echo "$SSH_PRIVATE_KEY" > /root/.ssh/id_ed25519
+              chmod 600 /root/.ssh/id_ed25519
+            env:
+                SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           - name: Checkout submodules
             run: git submodule update --init --recursive
           - name: Run full test

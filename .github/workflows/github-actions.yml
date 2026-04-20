@@ -25,10 +25,6 @@ jobs:
               chmod 600 /root/.ssh/id_ed25519
           - name: Checkout submodules
             run: git submodule update --init --recursive
-          - name: Debug SSH Key
-            run: |
-                ls -la /root/.ssh/
-                ssh -T git@github.com
           - name: Run full test
             env:
               GIT_SSH_COMMAND: "ssh -o StrictHostKeyChecking=no"

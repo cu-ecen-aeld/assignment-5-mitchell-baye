@@ -10,21 +10,20 @@ jobs:
         container: cuaesd/aesd-autotest:24-assignment4-buildroot
         runs-on: self-hosted
         timeout-minutes: 120
+        env:
+          GIT_SSH_COMMAND: "ssh -o StrictHostKeyChecking=no"
         steps:
           - uses: actions/checkout@v2
           - uses: webfactory/ssh-agent@v0.5.3
             with:
                 ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           - name: Fix known_hosts
-            run : |
-                ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com" || true
-                ssh-keyscan -t ed25519 github.com >> /root/.ssh/known_hosts
+            run: |
+              ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com" || true
+              ssh-keyscan -t ed25519 github.com >> /root/.ssh/known_hosts
           - name: Checkout submodules
             run: git submodule update --init --recursive
           - name: Run full test
-            env:
-              GIT_SSH_COMMAND: "ssh -o StrictHostKeyChecking=no"
-              SSH_AUTH_SOCK: &{{ env.SSH_AUTH_SOCK }}
             run: ./full-test.sh
           - name: Cleanup
             if: always()
